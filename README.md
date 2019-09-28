@@ -1,0 +1,2 @@
+# fss-scala
+Functional Spreadsheet 
