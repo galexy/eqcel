@@ -2,6 +2,41 @@ package net.reasoning.eqcel
 
 object FinModel extends App {
 
+  // Dimensions of cells
+  // -------------------
+  // 1. How is a range of cells defined
+  //    a. open for the user to specify input
+  //    b. a constant value or sequence of constant values
+  //    c. values read from an external source (file, database or service)
+  //    d. a formula referencing potentially other ranges or functions
+  //    e. a conditional expression ideally modeled as an if-else expression in 
+  //       the host language. Open question - how do we capture this expression?
+  //   Note: native spreadsheet functions will represented as stubs in the DSL
+  //         and calls to user defined functions are captured
+  // 2. The type of the value of the cell
+  //    a. Number
+  //    b. String
+  //    c. Percentage
+  //    d. Date, Time, Date and Time
+  //    e. Currency
+  // 3. The type of index into the range
+  //    a. The index type must be enumerable 
+  //       Ints, Years, Months, Weeks, Days
+  //       or a fixed set constants like a list of countries
+  // 4. Ranges or individual cells can be null?
+  // 5. Cell computation can result in an error and errors should propogate
+
+  // Formulas should type check, meaning only legal combinations should be allowed
+  // Ranges should be modeled abstractly that represent the dimensions specified above
+  // A functional spreadsheet program is defined by combining ranges and cells
+  // The result is a model of a functional spreadsheet program (the description of one)
+  // This model is then reified by a concrete implementation.
+  // One possible concrete implementation converts the program into a google spreadsheet
+  // Another is a reactive program that can react to changes to input and/or constant cells
+  // The spreadsheet implmentation will need to also "compile" user-defined functions 
+  // into whatever udf mechanism is available - for example in google, they will have to
+  // be compiled into javascript
+
   implicit class Year(val year: Int) extends AnyVal {
     def to(toyear: Year): IndexedSeq[Year] = year.to(toyear)
   }
@@ -35,14 +70,14 @@ object FinModel extends App {
     def apply[S <: Int, E <: Int](title: String) = new Money[S,E](title)
   }
 
+  // Formula Definition Use cases and examples
+
   val firstYear = 2000
   val secondYear = firstYear + 1
   val lastYear = 2018
   type FirstYear = firstYear.type
   type SecondYear = secondYear.type
   type LastYear = lastYear.type
-
-  // Formula Definition Use cases
 
   // 1. Defining a linear range of cells that are meant to be inputs of a certain type
   //    and the type of the index and range of the index
@@ -58,9 +93,11 @@ object FinModel extends App {
   // 3. Define an array that is a function of other arrays
 
   // 3.1 - Define an array using a binary operator of two arrays
+  // Note - need to have type checker limit valid operations
+  // For example, Money + Money is fine, but Money * Money is not
+  // on the other hand Money * Percentage or Money * Number is fine
+  // and maybe Sting + Money?
   val totalRevenue          = revenue + otherOperatingRevenue
-
-  println(revenue.range)
 
   // 3.2 - Define an array as the SUM/MIN/MAX (Monoid) of multiple arrays
 
