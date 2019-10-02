@@ -181,7 +181,7 @@ trait BaseFinModel extends Formulas {
 
   val revenue          = Money()
   revenue[FirstYear]   := Input[Money]
-  revenue[Otherwise]   := { (year) => revenue(year-1) * growthRate } // Hmm... hardcoding
+  revenue              := { (year) => revenue(year-1) * growthRate } // Hmm... hardcoding
 
   val opeartingRevenue = same shape revenue
   opeartingRevenue     := Input[Money]
