@@ -54,7 +54,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
   test("index out of range for update") {
     object Model extends Sheet {
       val revenue = Range[0, 10]()
-      revenue.update(100, 10)
+      revenue(100) = 10
     }
 
     assertThrows[IllegalArgumentException](Model)
