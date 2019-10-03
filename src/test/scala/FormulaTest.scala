@@ -4,7 +4,7 @@ package test
 import org.scalatest._
 import net.reasoning.eqcel.formulas._
 
-class ExprSuite extends FunSuite with DiagrammedAssertions with Matchers {
+class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
 
   test("define a range with a formula referencing another range cell") {
     object Model extends Sheet {
