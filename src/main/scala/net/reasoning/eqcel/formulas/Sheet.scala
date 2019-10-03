@@ -4,5 +4,5 @@ package net.reasoning.eqcel.formulas
   * 
   */
 trait Sheet {
-  
+
 }

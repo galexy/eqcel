@@ -17,14 +17,25 @@ package net.reasoning.eqcel.formulas
   * }}}
   */ 
 sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
+  import scala.collection.mutable.Map
+  private[eqcel] val overrides: Map[Int, Expr] = Map()
+
   def apply(index: Expr): Expr = RangeIndexExpr(this, index)
 
-  def update(index: Int, expr: Expr)(implicit s: ValueOf[S], e: ValueOf[E]): Unit = {
+  def update(index: Int, formula: Expr)(implicit s: ValueOf[S], e: ValueOf[E]): Unit = {
     require(index >= s.value && index < e.value, s"Index $index out of range")
-    // for the moment, no need to update the sheet env
+    require(!overrides.contains(index), "Index $index has already been overriden for this range")
+
+    overrides += index -> formula
   }
 
-  def formula(index: Expr): Expr
+  private[eqcel] def formula(indexExpr: IntLit)(implicit s: ValueOf[S], e: ValueOf[E]): Expr = {
+    val index = indexExpr.value
+    require(index >= s.value && index < e.value, s"Index $index out of range")
+    overrides.getOrElse(index, baseFormula(index))
+  }
+
+  protected def baseFormula(index: Expr): Expr
 }
 
 object Range {
@@ -36,13 +47,13 @@ object Range {
 }
 
 case class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int]() extends Range[S,E] {
-  def formula(index: Expr) = Empty
+  def baseFormula(index: Expr) = Empty
 }
 
 case class FormulaRange[S <: Singleton with Int, E <: Singleton with Int](
   definition: Expr => Expr
 ) extends Range[S,E] {
 
-  def formula(index: Expr) = definition(index)
+  def baseFormula(index: Expr) = definition(index)
 
 }
