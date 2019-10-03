@@ -19,15 +19,7 @@ case class RangeIndexExpr[S <: Singleton with Int, E <: Singleton with Int](
   index: Expr
 ) extends Expr {
 
-//  def := (e: Expr): OverrideDefinition[S,E] = OverrideDefinition(this, e)
-
 }
 
 case class Var(name: String) extends Expr
 case class IntLit(value: Int) extends Expr
-
-case class OverrideDefinition[S <: Singleton with Int, E <: Singleton with Int](
-  rangeIndex: RangeIndexExpr[S,E], expr: Expr
-) {
-
-}
