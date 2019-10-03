@@ -14,15 +14,19 @@ case class Sub(left: Expr, right: Expr) extends Expr
 case class Mul(left: Expr, right: Expr) extends Expr
 case class Div(left: Expr, right: Expr) extends Expr
 
-case class RangeIndexExpr[S <: Int, E <: Int](range: Range[S,E], index: Expr) 
-  extends Expr {
-  def := (e: Expr): OverrideDefinition[S,E] = OverrideDefinition(this, e)
+case class RangeIndexExpr[S <: Singleton with Int, E <: Singleton with Int](
+  range: Range[S,E], 
+  index: Expr
+) extends Expr {
+
+//  def := (e: Expr): OverrideDefinition[S,E] = OverrideDefinition(this, e)
+
 }
 
 case class Var(name: String) extends Expr
 case class IntLit(value: Int) extends Expr
 
-case class OverrideDefinition[S <: Int, E <: Int](
+case class OverrideDefinition[S <: Singleton with Int, E <: Singleton with Int](
   rangeIndex: RangeIndexExpr[S,E], expr: Expr
 ) {
 

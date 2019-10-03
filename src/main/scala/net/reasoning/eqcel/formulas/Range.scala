@@ -16,7 +16,7 @@ package net.reasoning.eqcel.formulas
   * nextYear(1999) = 2001
   * }}}
   */ 
-sealed trait Range[S <: Int, E <: Int] {
+sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
   var rangeName: Option[String] = None
 
   def apply(index: Expr): Expr = RangeIndexExpr(this, index)
@@ -29,23 +29,23 @@ sealed trait Range[S <: Int, E <: Int] {
   def formula(index: Expr): Expr
 
   def name: Option[String] = rangeName
-  
+
   def name_=(s:String):Unit = { rangeName = Some(s) }
 }
 
 object Range {
-  def apply[S <: Int, E <: Int](): Range[S,E] = 
-    LinearRange[S,E]()
+  def apply[S <: Singleton with Int, E <: Singleton with Int](): Range[S,E] = 
+    EmptyLinearRange[S,E]()
 
-  def apply[S <: Int, E <: Int](formula: Expr => Expr): Range[S,E] = 
+  def apply[S <: Singleton with Int, E <: Singleton with Int](formula: Expr => Expr): Range[S,E] = 
     new FormulaRange[S,E](formula)
 }
 
-case class LinearRange[S <: Int, E <: Int]() extends Range[S,E] {
+case class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int]() extends Range[S,E] {
   def formula(index: Expr) = Empty
 }
 
-case class FormulaRange[S <: Int, E <: Int](
+case class FormulaRange[S <: Singleton with Int, E <: Singleton with Int](
   definition: Expr => Expr
 ) extends Range[S,E] {
 

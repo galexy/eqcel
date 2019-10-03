@@ -38,6 +38,7 @@ class ExprSuite extends FunSuite with DiagrammedAssertions with Matchers {
   test("define a range recusrively") {
     object Model extends Sheet {
       val revenue = Range[0,10]()
+
       val cumuRevenue: FormulaRange[0, 10] = 
         (year: Expr) => cumuRevenue(year -1) + revenue(year)        
     }
