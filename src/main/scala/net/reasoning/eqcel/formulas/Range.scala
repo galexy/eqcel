@@ -16,29 +16,39 @@ package net.reasoning.eqcel.formulas
   * nextYear(1999) = 2001
   * }}}
   */ 
-sealed trait Range {
+sealed trait Range[S <: Int, E <: Int] {
   var rangeName: Option[String] = None
 
   def apply(index: Expr): Expr = RangeIndexExpr(this, index)
-  def update(index: Int, expr: Expr): Unit = {
+
+  def update(index: Int, expr: Expr)(implicit s: ValueOf[S], e: ValueOf[E]): Unit = {
+    require(index >= s.value && index < e.value, s"Index $index out of range")
     // for the moment, no need to update the sheet env
   }
 
   def formula(index: Expr): Expr
 
   def name: Option[String] = rangeName
+  
   def name_=(s:String):Unit = { rangeName = Some(s) }
 }
 
 object Range {
-  def apply(): Range = LinearRange()
-  def apply(formula: Expr => Expr): Range = new FormulaRange(formula)
+  def apply[S <: Int, E <: Int](): Range[S,E] = 
+    LinearRange[S,E]()
+
+  def apply[S <: Int, E <: Int](formula: Expr => Expr): Range[S,E] = 
+    new FormulaRange[S,E](formula)
 }
 
-case class LinearRange() extends Range {
+case class LinearRange[S <: Int, E <: Int]() extends Range[S,E] {
   def formula(index: Expr) = Empty
 }
 
-case class FormulaRange(definition: Expr => Expr) extends Range {
+case class FormulaRange[S <: Int, E <: Int](
+  definition: Expr => Expr
+) extends Range[S,E] {
+
   def formula(index: Expr) = definition(index)
+
 }

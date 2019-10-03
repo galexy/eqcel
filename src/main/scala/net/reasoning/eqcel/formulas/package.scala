@@ -6,5 +6,7 @@ package net.reasoning.eqcel
   */
 package object formulas {
   implicit def intToExpr(i: Int): Expr = IntLit(i)
-  implicit def funcToFormula(e: Expr => Expr): FormulaRange = FormulaRange(e)
+
+  implicit def funcToFormula[S <: Int, E <: Int](e: Expr => Expr): FormulaRange[S,E] = 
+    FormulaRange(e)
 }
