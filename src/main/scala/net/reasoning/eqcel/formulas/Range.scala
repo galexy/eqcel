@@ -17,8 +17,6 @@ package net.reasoning.eqcel.formulas
   * }}}
   */ 
 sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
-  var rangeName: Option[String] = None
-
   def apply(index: Expr): Expr = RangeIndexExpr(this, index)
 
   def update(index: Int, expr: Expr)(implicit s: ValueOf[S], e: ValueOf[E]): Unit = {
@@ -27,10 +25,6 @@ sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
   }
 
   def formula(index: Expr): Expr
-
-  def name: Option[String] = rangeName
-
-  def name_=(s:String):Unit = { rangeName = Some(s) }
 }
 
 object Range {
