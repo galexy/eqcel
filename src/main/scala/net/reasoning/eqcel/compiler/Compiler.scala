@@ -5,6 +5,7 @@ trait Phase[T,U] {
 }
 
 class Compiler {
-  val compile = (DevectorPhase.transform _) andThen
+  val compile = (ReifyFormulaPhase.transform _) andThen
+                (DevectorPhase.transform _) andThen
                 (LayoutPhase.transform _)
 }

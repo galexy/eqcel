@@ -1,7 +1,7 @@
 package net.reasoning.eqcel.compiler
-import net.reasoning.eqcel.formulas.Sheet
+import net.reasoning.eqcel.intermediate.ReifiedSheet
 import net.reasoning.eqcel.intermediate.ExpandedSheet
 
-object DevectorPhase extends Phase[Sheet, ExpandedSheet] {
-  def transform(tree: Sheet): ExpandedSheet = ExpandedSheet(Seq())
+object DevectorPhase extends Phase[ReifiedSheet, ExpandedSheet] {
+  def transform(tree: ReifiedSheet): ExpandedSheet = ExpandedSheet(Seq())
 }
