@@ -20,6 +20,26 @@ class FormulaSuite extends FunSuite
     }
   }
 
+  test("define a range with + operator") {
+    object Model extends Sheet {
+      val range = FormulaRange[0, 10](index => index + 100)
+    }
+
+    Model.range.formula(IntLit(1)) should matchPattern {
+      case Add(IntLit(1), IntLit(100)) =>
+    }
+  }
+
+  test("define a range with - operator") {
+    object Model extends Sheet {
+      val range = FormulaRange[0, 10](index => index - 100)
+    }
+
+    Model.range.formula(IntLit(1)) should matchPattern {
+      case Sub(IntLit(1), IntLit(100)) =>
+    }
+  }
+
   test("creating an formula constant override") {
     object Model extends Sheet {
       val rangeWithOverride = Range[0, 10]
