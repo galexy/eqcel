@@ -7,12 +7,12 @@ import net.reasoning.eqcel.compiler._
 import net.reasoning.eqcel.intermediate._
 
 @Ignore
-class DevectorPhaseSuite extends FunSuite
+class FlattenPhaseSuite extends FunSuite
   with DiagrammedAssertions 
   with Matchers {
 
   val compiler = (ReifyFormulaPhase transform _) andThen
-                 (DevectorPhase.transform _)
+                 (FlattenPhase.transform _)
 
   test("empty expand phase") {
     object Model extends Sheet

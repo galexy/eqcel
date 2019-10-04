@@ -6,6 +6,6 @@ trait Phase[T,U] {
 
 class Compiler {
   val compile = (ReifyFormulaPhase.transform _) andThen
-                (DevectorPhase.transform _) andThen
+                (FlattenPhase.transform _) andThen
                 (LayoutPhase.transform _)
 }
