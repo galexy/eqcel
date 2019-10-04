@@ -9,6 +9,8 @@ class FormulaSuite extends FunSuite
   with Matchers 
   with Inside {
 
+  import SheetExpression._
+
   test("define a range with a formula referencing another range cell") {
     object Model extends Sheet {
       val source = Range[0,10]
@@ -17,6 +19,26 @@ class FormulaSuite extends FunSuite
 
     Model.range.formula(IntLit(1)) should matchPattern {
       case RangeIndexExpr(_, Sub(IntLit(1), IntLit(1))) =>
+    }
+  }
+
+  test("define a range with + operator") {
+    object Model extends Sheet {
+      val range = FormulaRange[0, 10](index => index + 100)
+    }
+
+    Model.range.formula(IntLit(1)) should matchPattern {
+      case Add(IntLit(1), IntLit(100)) =>
+    }
+  }
+
+  test("define a range with - operator") {
+    object Model extends Sheet {
+      val range = FormulaRange[0, 10](index => index - 100)
+    }
+
+    Model.range.formula(IntLit(1)) should matchPattern {
+      case Sub(IntLit(1), IntLit(100)) =>
     }
   }
 

@@ -1,5 +1,7 @@
 package net.reasoning.eqcel.formulas
 
+import SheetExpression._
+
 /** Trait that defines abstractly ranges within a spreadsheet program.
   * Ranges can represent a cell, vector, matrix or tensor.
   * Ranges have several different dimension
