@@ -46,14 +46,32 @@ object Range {
     new FormulaRange[S,E](formula)
 }
 
-case class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int]() extends Range[S,E] {
+class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int]() extends Range[S,E] {
   def baseFormula(index: Expr) = Empty
+
+  override def toString(): String = s"EmptyLinearRange($hashCode)"
 }
 
-case class FormulaRange[S <: Singleton with Int, E <: Singleton with Int](
-  definition: Expr => Expr
-) extends Range[S,E] {
+object EmptyLinearRange {
+  def apply[S <: Singleton with Int, E <: Singleton with Int]() =
+    new EmptyLinearRange[S,E]()
 
+  def unapply[S <: Singleton with Int, E <: Singleton with Int](e: EmptyLinearRange[S,E]) =
+    Some()
+}
+
+class FormulaRange[S <: Singleton with Int, E <: Singleton with Int](
+  val definition: Expr => Expr
+) extends Range[S,E] {
   def baseFormula(index: Expr) = definition(index)
 
+  override def toString(): String = s"FormulaRange($hashCode)"
+}
+
+object FormulaRange {
+  def apply[S <: Singleton with Int, E <: Singleton with Int](definition: Expr => Expr) =
+    new FormulaRange[S,E](definition)
+
+  def unapply[S <: Singleton with Int, E <: Singleton with Int](f: FormulaRange[S,E]) =
+    Some(f.definition)
 }

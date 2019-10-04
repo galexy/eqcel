@@ -43,7 +43,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
       val revenue = Range[0,10]
 
       val cumuRevenue: FormulaRange[2000, 2018] = 
-        (year: Expr) => cumuRevenue(year -1) + revenue(year)        
+        (year: Expr) => cumuRevenue(year -1) + revenue(year)
     }
 
     Model.cumuRevenue.formula(2001) should matchPattern {
@@ -68,6 +68,31 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
     }
 
     assertThrows[IllegalArgumentException](Model)
+  }
+
+  test("ranges have unique hashCodes") {
+    object Model extends Sheet {
+      val range1 = Range[0, 10]
+      val range2 = Range[0, 10]
+
+      val f1 = FormulaRange[0, 10] { i => range1(i) }
+      val f2 = FormulaRange[0, 10] { i => range1(i) }
+
+      def func(i: Expr) = range1(i)
+      val f3 = FormulaRange[0, 10] (func _)
+      val f4 = FormulaRange[0, 10] (func _)
+    }
+
+    assert(Model.range1.hashCode != Model.range2.hashCode)
+    assert(Model.f1.hashCode != Model.f2.hashCode)
+    assert(Model.f3.hashCode != Model.f4.hashCode)
+  }
+
+  test("formula is registered with sheet") {
+    object Model extends Sheet {
+      val revenue = Range[0, 10]
+    }
+    assert(Model.ranges.length == 1)
   }
 
 }
