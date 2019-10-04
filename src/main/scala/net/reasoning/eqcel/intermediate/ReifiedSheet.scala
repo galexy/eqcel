@@ -3,19 +3,16 @@ package net.reasoning.eqcel.intermediate
 import net.reasoning.eqcel.expressions._
 import net.reasoning.eqcel.formulas._
 
-object RefiedExpressions extends ExprModule {
+object ReifiedExpressions extends ExprModule {
   case class RangeIndexExpr(
-    range: ReifiedRange,
+    range: Int,
     index: Expr
-  ) extends GenRangeIndexExpr[ReifiedRange]
+  ) extends GenRangeIndexExpr[Int]
 
-  case class UnresolvedIndexExpr(
-    range: String,
-    index: Expr
-  ) extends GenRangeIndexExpr[String]
+  case class Var(name: String) extends Expr
 }
 
-import RefiedExpressions._
+import ReifiedExpressions._
 
 case class ReifiedSheet(ranges: Seq[ReifiedRange])
-case class ReifiedRange(start: Int, end: Int, definition: PartialFunction[Int, Expr])
+case class ReifiedRange(id: Int, start: Int, end: Int, definition: Int => Expr)

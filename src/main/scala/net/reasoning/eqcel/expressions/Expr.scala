@@ -5,7 +5,7 @@ package net.reasoning.eqcel.expressions
   * 
   */
 trait ExprModule {
-  sealed trait Expr {
+  trait Expr {
     def +(e: Expr): Expr = Add(this, e)
     def -(e: Expr): Expr = Sub(this, e)
   }
@@ -13,10 +13,9 @@ trait ExprModule {
   object Empty extends Expr
   case class Add(left: Expr, right: Expr) extends Expr
   case class Sub(left: Expr, right: Expr) extends Expr
-  case class Mul(left: Expr, right: Expr) extends Expr
-  case class Div(left: Expr, right: Expr) extends Expr
+  // case class Mul(left: Expr, right: Expr) extends Expr
+  // case class Div(left: Expr, right: Expr) extends Expr
 
-  case class Var(name: String) extends Expr
   case class IntLit(value: Int) extends Expr
 
   abstract class GenRangeIndexExpr[T] extends Expr {
