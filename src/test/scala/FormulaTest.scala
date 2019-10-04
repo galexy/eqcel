@@ -4,7 +4,10 @@ package test
 import org.scalatest._
 import net.reasoning.eqcel.formulas._
 
-class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
+class FormulaSuite extends FunSuite 
+  with DiagrammedAssertions 
+  with Matchers 
+  with Inside {
 
   test("define a range with a formula referencing another range cell") {
     object Model extends Sheet {
@@ -12,7 +15,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
       val range: FormulaRange[0, 10] = (index: Expr) => source(index - 1)
     }
 
-    Model.range.formula(1) should matchPattern {
+    Model.range.formula(IntLit(1)) should matchPattern {
       case RangeIndexExpr(_, Sub(IntLit(1), IntLit(1))) =>
     }
   }
@@ -23,7 +26,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
       rangeWithOverride(1) = 1
     }
 
-    assert(IntLit(1) == Model.rangeWithOverride.formula(1))
+    assert(IntLit(1) == Model.rangeWithOverride.formula(IntLit(1)))
   }
 
   test("expands function calls") {
@@ -33,7 +36,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
       val range = FormulaRange[0, 10](index => inc(index))
     }
 
-    Model.range.formula(1) should matchPattern {
+    Model.range.formula(IntLit(1)) should matchPattern {
       case Add(IntLit(1), IntLit(1)) =>
     }
   }
@@ -46,7 +49,7 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
         (year: Expr) => cumuRevenue(year -1) + revenue(year)
     }
 
-    Model.cumuRevenue.formula(2001) should matchPattern {
+    Model.cumuRevenue.formula(IntLit(2001)) should matchPattern {
       case Add(RangeIndexExpr(FormulaRange(_), Sub(IntLit(2001), IntLit(1))), _) =>
     }
   }
@@ -88,11 +91,33 @@ class FormulaSuite extends FunSuite with DiagrammedAssertions with Matchers {
     assert(Model.f3.hashCode != Model.f4.hashCode)
   }
 
-  test("formula is registered with sheet") {
+  test("empty range is registered with sheet") {
     object Model extends Sheet {
       val revenue = Range[0, 10]
     }
     assert(Model.ranges.length == 1)
+    assert(Model.ranges(0).baseFormula(IntLit(1)) == Empty)
+  }
+
+  test("formula range is registered with sheet") {
+    object Model extends Sheet {
+      val f = FormulaRange[0, 10] { year => year + 1 }
+    }
+    assert(Model.ranges.length == 1)
+    assert(Model.ranges(0).baseFormula(IntLit(0)) == Add(IntLit(0), IntLit(1)))
+  }
+
+  test("override of empty range") {
+    object Model extends Sheet {
+      val revenue = Range[0, 10]
+      revenue(0) = 1000
+    }
+    assert(Model.ranges.length == 1)
+    inside(Model.ranges(0)) { case RangeMetadata(_, _, _, baseFormula, overrides) => 
+      assert(baseFormula(IntLit(1)) == Empty)
+      assert(overrides.size == 1)
+      assert(overrides(0) == IntLit(1000))
+    }
   }
 
 }

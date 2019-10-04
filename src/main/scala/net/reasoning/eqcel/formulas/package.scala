@@ -5,8 +5,5 @@ package net.reasoning.eqcel
   * that can be defined by equations.
   */
 package object formulas {
-  implicit def intToExpr(i: Int): IntLit = IntLit(i)
 
-  implicit def funcToFormula[S <: Singleton with Int, E <: Singleton with Int]
-    (e: Expr => Expr): FormulaRange[S,E] = FormulaRange(e)
 }
