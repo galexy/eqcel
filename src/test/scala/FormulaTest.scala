@@ -9,6 +9,8 @@ class FormulaSuite extends FunSuite
   with Matchers 
   with Inside {
 
+  import SheetExpression._
+
   test("define a range with a formula referencing another range cell") {
     object Model extends Sheet {
       val source = Range[0,10]

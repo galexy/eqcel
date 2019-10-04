@@ -2,6 +2,8 @@ package net.reasoning.eqcel.formulas
 
 import scala.collection.mutable
 
+import SheetExpression._
+
 /** Trait used to declare formulas for a logic sheet
   * 
   */
