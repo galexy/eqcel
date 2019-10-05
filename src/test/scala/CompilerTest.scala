@@ -54,9 +54,9 @@ class CompilerSuite extends FunSuite
     val expanded = new Compiler().compile(Model)
     expanded should matchPattern {
       case ExpandedSheet(Seq(ExpandedRange(_, Seq(
-        FormulaCell("(0+1)"),
-        FormulaCell("(1+1)"),
-        FormulaCell("(2+1)")
+        FormulaCell("=(0+1)"),
+        FormulaCell("=(1+1)"),
+        FormulaCell("=(2+1)")
       )))) =>
     }
   }

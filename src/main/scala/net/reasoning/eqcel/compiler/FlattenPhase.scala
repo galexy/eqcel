@@ -30,7 +30,7 @@ object FlattenPhase extends Phase[LayoutSheet, ExpandedSheet] {
   def transformExprCell(expr: Expr)(implicit locations: RangeLayouts): Cell = expr match {
     case Empty => EmptyCell
     case IntLit(value) => IntCell(value)
-    case expr => FormulaCell(transformExpr(expr))
+    case expr => FormulaCell("=" + transformExpr(expr))
   }
 
   def transformExpr(expr: Expr)(implicit locations: RangeLayouts): String = expr match {
