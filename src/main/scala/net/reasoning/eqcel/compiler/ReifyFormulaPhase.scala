@@ -12,6 +12,13 @@ import cats.data.State
 import cats.Foldable._
 import cats.instances.list._
 
+/** Compiler phase that takes a tree of user defined formulas and reifies them.
+ * 
+ * A reified tree of formulas is represented as a readonly set of partial 
+ * functions on range index (for a cell) to the expression for that cell.
+ * A range's formula and all of its overrides are collasped into a single
+ * partial function.
+ */
 object ReifyFormulaPhase extends Phase[Sheet, ReifiedSheet] {
   type Context = Map[Int, ReifiedRange]
   type SheetFormula = SheetExpression.IntLit => SheetExpression.Expr

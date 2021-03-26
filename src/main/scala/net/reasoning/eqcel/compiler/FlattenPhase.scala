@@ -10,6 +10,9 @@ import net.reasoning.eqcel.intermediate.EmptyCell
 import net.reasoning.eqcel.intermediate.IntCell
 import net.reasoning.eqcel.intermediate.FormulaCell
 
+/** Compiler phase that expands ranges into individual cells. 
+  * 
+  */
 object FlattenPhase extends Phase[LayoutSheet, ExpandedSheet] {
   def transform(tree: LayoutSheet): ExpandedSheet = {
     val expandedRanges = tree.rangesDefintions.map { r =>

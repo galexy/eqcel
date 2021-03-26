@@ -4,8 +4,16 @@ import scala.collection.mutable
 
 import SheetExpression._
 
-/** Trait used to declare formulas for a logic sheet
+/** Trait for building spreadsheets out of formulas.
   * 
+  * Implementations of this trait represent spreadsheet programs as a series
+  * of ranges defined by formulas. This is the top level embedded DSL for
+  * eqcel. Users of the DSL create objects that implement the Sheet trait.
+  * Ranges are vals with in the sheet object and are defined as formulas,
+  * which are functions of Expr => Expr. The embedded DSL is the formula
+  * definitions and as formulas and ranges are defined, they register themsevles
+  * with the Sheet. In this sense, the Sheet is a mutable expression tree
+  * that users create by defining vals within the Sheet object.
   */
 trait Sheet { self =>
   implicit val sheet = self
