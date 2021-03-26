@@ -4,6 +4,9 @@ import net.reasoning.eqcel.intermediate.ReifiedSheet
 import net.reasoning.eqcel.intermediate.RowLayout
 import net.reasoning.eqcel.intermediate.RangeLayouts
 
+/** Compiler phase that layouts out ranges onto a spreadsheet.
+  * 
+  */
 object LayoutPhase extends Phase[ReifiedSheet, LayoutSheet] {
   def transform(tree: ReifiedSheet): LayoutSheet = {
     // hard code to one row per range

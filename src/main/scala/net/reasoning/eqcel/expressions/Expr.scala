@@ -3,6 +3,14 @@ package net.reasoning.eqcel.expressions
 /** Expression module for representing expressions trees from 
   * the sheets DSL and later phases of the compiler.
   * 
+  * This module extracts out common parts of expression trees that would 
+  * otherwise be repeated in each compiler phase that had a need for 
+  * representing expressions.
+  * 
+  * Modules that implement this trait can introduce expressions that
+  * are specific to that phase. Implementations of this trait need to 
+  * provide concrete implementions of abstract Expr types.
+  * 
   */
 trait ExprModule {
   trait Expr {
