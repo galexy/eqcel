@@ -61,20 +61,34 @@ class CompilerSuite extends FunSuite
     }
   }
 
-  // test("expanded formula with range references") {
-  //   object Model extends Sheet {
-  //     val range = Range[0, 3]
-  //     val formula = FormulaRange[0, 3](index => range(index) + 1)
-  //   }
+  test("expanded formula with range references") {
+    object Model extends Sheet {
+      val range = Range[0, 2]
+      val formula = FormulaRange[0, 2](index => range(index) + 1)
+    }
 
-  //   val expanded = new Compiler().compile(Model)
-  //   val rangeHashId = s"range_Model.range.hashCode"
+    val expanded = new Compiler().compile(Model)
+    val rangeHashId = s"range_Model.range.hashCode"
 
-  //   expanded should matchPattern {
-  //     case ExpandedSheet(Seq(ExpandedRange(_, Seq(
-  //       FormulaCell(OpUFExpr(Plus, IndexRangeRefUFExpr(`rangeHashId`, IntUFExpr(1)), IntUFExpr(1))),
-  //       FormulaCell(OpUFExpr(Plus, IndexRangeRefUFExpr(`rangeHashId`, IntUFExpr(2)), IntUFExpr(1))),
-  //       FormulaCell(OpUFExpr(Plus, IndexRangeRefUFExpr(`rangeHashId`, IntUFExpr(3)), IntUFExpr(1)))
-  //     )))) => 
-  //   }
+    // NOTE: currently, the layout is non-deterministic
+    expanded should (matchPattern {
+      case ExpandedSheet(Seq(
+        ExpandedRange(_, _),
+        ExpandedRange(_, Seq(
+          FormulaCell("=(A1+1)"),
+          FormulaCell("=(B1+1)"),
+          FormulaCell("=(C1+1)"),
+        )
+      ))) => 
+    } or matchPattern {
+      case ExpandedSheet(Seq(
+        ExpandedRange(_, Seq(
+          FormulaCell("=(A2+1)"),
+          FormulaCell("=(B2+1)"),
+          FormulaCell("=(C2+1)"),
+        )),
+        ExpandedRange(_, _),
+      )) => 
+    })
   }
+}
