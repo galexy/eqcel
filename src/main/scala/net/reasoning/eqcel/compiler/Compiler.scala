@@ -14,7 +14,7 @@ trait Phase[T,U] {
 /** Eqcel compiler.
  * 
  *  the compiler tranforms a program that implements the
- * [[net.reasoning.eqcel.formulas.Sheets]] trait into a 
+ * [[net.reasoning.eqcel.formulas.Formulas]] trait into a 
  * [[net.reasoning.eqcel.intermediate.ExpandedSheet]].
  */
 class Compiler {
