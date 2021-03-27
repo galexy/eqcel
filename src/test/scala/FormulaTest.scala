@@ -12,7 +12,7 @@ class FormulaSuite extends FunSuite
   import SheetExpression._
 
   test("define a range with a formula referencing another range cell") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val source = Range[0,10]
       val range: FormulaRange[0, 10] = (index: Expr) => source(index - 1)
     }
@@ -23,7 +23,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("define a range with + operator") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range = FormulaRange[0, 10](index => index + 100)
     }
 
@@ -33,7 +33,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("define a range with - operator") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range = FormulaRange[0, 10](index => index - 100)
     }
 
@@ -43,7 +43,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("creating an formula constant override") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val rangeWithOverride = Range[0, 10]
       rangeWithOverride(1) = 1
     }
@@ -52,7 +52,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("expands function calls") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       def inc(i: Expr) = i + 1
 
       val range = FormulaRange[0, 10](index => inc(index))
@@ -64,7 +64,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("define a range recusrively") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val revenue = Range[0,10]
 
       val cumuRevenue: FormulaRange[2000, 2018] = 
@@ -77,7 +77,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("index out of range for update") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val revenue = Range[0, 10]()
       revenue(100) = 10
     }
@@ -86,7 +86,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("overrides cannot be overridden") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val revenue = Range[0, 10]
       revenue(1) = 0
       revenue(1) = 2
@@ -96,7 +96,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("ranges have unique hashCodes") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range1 = Range[0, 10]
       val range2 = Range[0, 10]
 
@@ -114,7 +114,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("empty range is registered with sheet") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val revenue = Range[0, 10]
     }
     assert(Model.ranges.length == 1)
@@ -122,7 +122,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("formula range is registered with sheet") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val f = FormulaRange[0, 10] { year => year + 1 }
     }
     assert(Model.ranges.length == 1)
@@ -130,7 +130,7 @@ class FormulaSuite extends FunSuite
   }
 
   test("override of empty range") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val revenue = Range[0, 10]
       revenue(0) = 1000
     }

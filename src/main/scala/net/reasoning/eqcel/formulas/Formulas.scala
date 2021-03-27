@@ -20,27 +20,33 @@ object SheetExpression extends ExprModule {
 
 import SheetExpression._
 
-/** Trait for building spreadsheets out of formulas.
+/** Trait for defining ranges and formulas for a spreadsheet.
   * 
   * Implementations of this trait represent spreadsheet programs as a series
   * of ranges defined by formulas. This is the top level embedded DSL for
-  * eqcel. Users of the DSL create objects that implement the Sheet trait.
+  * eqcel. Users of the DSL create objects that implement the Formulas trait.
   * Ranges are vals with in the sheet object and are defined as formulas,
   * which are functions of Expr => Expr. The embedded DSL is the formula
   * definitions and as formulas and ranges are defined, they register themsevles
-  * with the Sheet. In this sense, the Sheet is a mutable expression tree
-  * that users create by defining vals within the Sheet object.
+  * with the Formulas. In this sense, the Sheet is a mutable expression tree
+  * that users create by defining vals within the Formulas object.
   */
-trait Sheet { self =>
-  implicit val sheet = self
+trait Formulas { self =>
+  // Implicit to the current sheet for methods that need a reference
+  implicit val formulas = self
+
+  // Implicitly converter literl integers into Expression
   implicit def intToExpr(i: Int): IntLit = IntLit(i)
+
+  // Implicitly convert functions of Expr => Expr to a FormulaRange
   implicit def funcToFormula[S <: Singleton with Int, E <: Singleton with Int]
-    (formula: Expr => Expr)(implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E]): FormulaRange[S,E] = 
+    (formula: Expr => Expr)(implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E]): FormulaRange[S,E] = 
     FormulaRange(formula)
   
   type HashCode = Int
   type IndexedFormula = IntLit => Expr
 
+  // Mutable Map for registering the ranges defined in an instance of Sheet
   import scala.collection.mutable.{Map => MMap}
   val symbolTable = MMap[HashCode, RangeMetadata]()
 

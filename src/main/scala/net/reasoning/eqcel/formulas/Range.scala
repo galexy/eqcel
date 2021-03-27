@@ -26,7 +26,7 @@ sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
 
   def update
     (index: Int, formula: Expr)
-    (implicit s: ValueOf[S], e: ValueOf[E], sheet: Sheet): Unit = {
+    (implicit s: ValueOf[S], e: ValueOf[E], sheet: Formulas): Unit = {
       require(index >= s.value && index < e.value, s"Index $index out of range")
       require(!overrides.contains(index), "Index $index has already been overriden for this range")
 
@@ -45,19 +45,19 @@ sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
 
 object Range {
   def apply[S <: Singleton with Int, E <: Singleton with Int]
-    ()(implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E]): Range[S,E] = 
+    ()(implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E]): Range[S,E] = 
       EmptyLinearRange[S,E]()
 
   def apply[S <: Singleton with Int, E <: Singleton with Int]
     (formula: Expr => Expr)
-    (implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E]): Range[S,E] = 
+    (implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E]): Range[S,E] = 
       new FormulaRange[S,E](formula)
 }
 
 class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int] private[formulas] 
-  () (implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E])
+  () (implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E])
   extends Range[S,E] {
-    sheet.register(this, _ => Empty)
+    formulas.register(this, _ => Empty)
 
     def baseFormula(index: IntLit) = Empty
 
@@ -66,7 +66,7 @@ class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int] private
 
 object EmptyLinearRange {
   def apply[S <: Singleton with Int, E <: Singleton with Int]
-    ()(implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E]) =
+    ()(implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E]) =
       new EmptyLinearRange[S,E]()
 
   def unapply[S <: Singleton with Int, E <: Singleton with Int](e: EmptyLinearRange[S,E]) =
@@ -75,7 +75,7 @@ object EmptyLinearRange {
 
 class FormulaRange[S <: Singleton with Int, E <: Singleton with Int] private[formulas] 
   (val definition: IntLit => Expr)
-  (implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E])
+  (implicit sheet: Formulas, s: ValueOf[S], e: ValueOf[E])
   extends Range[S,E] {
     sheet.register(this, definition)
 
@@ -87,7 +87,7 @@ class FormulaRange[S <: Singleton with Int, E <: Singleton with Int] private[for
 object FormulaRange {
   def apply[S <: Singleton with Int, E <: Singleton with Int]
     (definition: Expr => Expr)
-    (implicit sheet: Sheet, s: ValueOf[S], e: ValueOf[E]) =
+    (implicit sheet: Formulas, s: ValueOf[S], e: ValueOf[E]) =
       new FormulaRange[S,E](definition)
 
   def unapply[S <: Singleton with Int, E <: Singleton with Int](f: FormulaRange[S,E]) =

@@ -12,14 +12,14 @@ class CompilerSuite extends FunSuite
   with Inside {
    
   test("empty expand phase") {
-    object Model extends Sheet
+    object Model extends Formulas
 
     val expanded = new Compiler().compile(Model)
     assert(expanded == ExpandedSheet(Seq()))
   }
 
   test("expand sheet with empty range") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range = Range[0, 2]
     }
 
@@ -30,7 +30,7 @@ class CompilerSuite extends FunSuite
   }
 
   test("expand empty range with an override") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range = Range[0, 2]
       range(1) = 1
     }
@@ -47,7 +47,7 @@ class CompilerSuite extends FunSuite
 
   test("expanded formula without range references") {
     // Note: no constant expression folding
-    object Model extends Sheet {
+    object Model extends Formulas {
       val formula = FormulaRange[0, 2](index => index + 1)
     }
 
@@ -62,7 +62,7 @@ class CompilerSuite extends FunSuite
   }
 
   test("expanded formula with range references") {
-    object Model extends Sheet {
+    object Model extends Formulas {
       val range = Range[0, 2]
       val formula = FormulaRange[0, 2](index => range(index) + 1)
     }

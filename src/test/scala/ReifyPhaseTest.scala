@@ -15,12 +15,12 @@ class ReifyPhaseSuite extends FunSuite
     val compiler = (ReifyFormulaPhase transform _)
 
     test("reify empty model") {
-      object Model extends Sheet
+      object Model extends Formulas
       assert(compiler(Model) == ReifiedSheet(Seq()))
     }
 
     test("reify range of empty cells") {
-      object Model extends Sheet {
+      object Model extends Formulas {
         val range = Range[0, 10]
       }
       val tree = compiler(Model)
@@ -33,7 +33,7 @@ class ReifyPhaseSuite extends FunSuite
     }
 
     test("reify an override") {
-      object Model extends Sheet {
+      object Model extends Formulas {
         val range = Range[0, 10]
         range(0) = 1
         range(1) = 2
@@ -50,7 +50,7 @@ class ReifyPhaseSuite extends FunSuite
     }
 
     test("reifying formula with plus operator") {
-      object Model extends Sheet {
+      object Model extends Formulas {
         val range = FormulaRange[0,10](year => year + 1)
       }
       val tree = compiler(Model)
@@ -62,7 +62,7 @@ class ReifyPhaseSuite extends FunSuite
     }
 
     test("reifying formula with minux operator") {
-      object Model extends Sheet {
+      object Model extends Formulas {
         val range = FormulaRange[0,10](year => year - 1)
       }
       val tree = compiler(Model)
@@ -74,7 +74,7 @@ class ReifyPhaseSuite extends FunSuite
     }
 
     test("reify formula with reference") {
-      object Model extends Sheet {
+      object Model extends Formulas {
         val range = Range[0, 10]
         val formula = FormulaRange[0,10](index => range(index))
       }

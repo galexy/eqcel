@@ -1,6 +1,6 @@
 package net.reasoning.eqcel.compiler
 
-import net.reasoning.eqcel.formulas.Sheet
+import net.reasoning.eqcel.formulas.Formulas
 import net.reasoning.eqcel.formulas.RangeMetadata
 import net.reasoning.eqcel.formulas.SheetExpression
 
@@ -19,11 +19,11 @@ import cats.instances.list._
  * A range's formula and all of its overrides are collasped into a single
  * partial function.
  */
-object ReifyFormulaPhase extends Phase[Sheet, ReifiedSheet] {
+object ReifyFormulaPhase extends Phase[Formulas, ReifiedSheet] {
   type Context = Map[Int, ReifiedRange]
   type SheetFormula = SheetExpression.IntLit => SheetExpression.Expr
 
-  def transform(tree: Sheet): ReifiedSheet = {
+  def transform(tree: Formulas): ReifiedSheet = {
     val ranges = tree.ranges map (transformRange)
 
     ReifiedSheet(ranges)
