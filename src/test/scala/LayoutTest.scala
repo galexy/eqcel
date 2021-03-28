@@ -10,6 +10,9 @@ class LayoutSuite extends FunSuite
   with Matchers 
   with Inside {
 
+  val compiler = (ReifyFormulaPhase.transform _) andThen
+                 (LayoutPhase.transform _)
+
   test("layout a row range") {
     object Model extends Formulas {
       val range = Range[0, 2]
@@ -18,27 +21,39 @@ class LayoutSuite extends FunSuite
     object Foo extends Worksheet {
       place row Model.range at A(1)
     }
+
+    val layout = compiler(Foo)
   }
 
-  test("combine rows and then layout") {
+  ignore("combine rows and then layout") {
     object Model extends Formulas {
       val range = Range[0, 2]
       val range2 = Range[0, 2]
     }
+
     object Foo extends Worksheet {
       val table = Model.range ++ Model.range2
       place(table) at A(1)
     }
   }
 
-  test("combine columns and then layout") {
+  ignore("combine columns and then layout") {
     object Model extends Formulas {
       val range = Range[0, 2]
       val range2 = Range[0, 2]
     }
+
     object Foo extends Worksheet {
       val table = Model.range || Model.range2
       place(table) at A(1)
     }
+  }
+
+  ignore("layout the same range more than once should fail") {
+
+  }
+
+  ignore("layout a range that is part of another range should fail") {
+    
   }
 }

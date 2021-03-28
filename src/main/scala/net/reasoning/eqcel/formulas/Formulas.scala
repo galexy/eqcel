@@ -46,11 +46,13 @@ trait Formulas { self =>
   type HashCode = Int
   type IndexedFormula = IntLit => Expr
 
-  // Mutable Map for registering the ranges defined in an instance of Sheet
+  // Mutable Map for registering the ranges defined in an instance of Formulas
   import scala.collection.mutable.{Map => MMap}
   val symbolTable = MMap[HashCode, RangeMetadata]()
 
   def ranges:Seq[RangeMetadata] = symbolTable.values.toIndexedSeq
+
+  def range(hashId: HashCode) = symbolTable(hashId)
 
   def register[S <: Singleton with Int, E <: Singleton with Int]
     (r: Range[S,E], formula: IndexedFormula)(implicit s: ValueOf[S], e: ValueOf[E]) = {
