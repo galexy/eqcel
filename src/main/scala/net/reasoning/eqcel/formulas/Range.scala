@@ -26,11 +26,11 @@ sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
 
   def update
     (index: Int, formula: Expr)
-    (implicit s: ValueOf[S], e: ValueOf[E], sheet: Formulas): Unit = {
+    (implicit s: ValueOf[S], e: ValueOf[E], formulas: Formulas): Unit = {
       require(index >= s.value && index < e.value, s"Index $index out of range")
       require(!overrides.contains(index), "Index $index has already been overriden for this range")
 
-      sheet.registerOverride(this, index -> formula)
+      formulas.registerOverride(this, index -> formula)
       overrides += index -> formula
     }
 
@@ -41,6 +41,8 @@ sealed trait Range[S <: Singleton with Int, E <: Singleton with Int] {
   }
 
   protected def baseFormula(index: IntLit): Expr
+
+  def formulasContainer: Formulas
 }
 
 object Range {
@@ -62,6 +64,8 @@ class EmptyLinearRange[S <: Singleton with Int, E <: Singleton with Int] private
     def baseFormula(index: IntLit) = Empty
 
     override def toString(): String = s"EmptyLinearRange($hashCode)"
+
+    def formulasContainer: Formulas = formulas
   }
 
 object EmptyLinearRange {
@@ -75,13 +79,15 @@ object EmptyLinearRange {
 
 class FormulaRange[S <: Singleton with Int, E <: Singleton with Int] private[formulas] 
   (val definition: IntLit => Expr)
-  (implicit sheet: Formulas, s: ValueOf[S], e: ValueOf[E])
+  (implicit formulas: Formulas, s: ValueOf[S], e: ValueOf[E])
   extends Range[S,E] {
-    sheet.register(this, definition)
+    formulas.register(this, definition)
 
     def baseFormula(index: IntLit) = definition(index)
 
     override def toString(): String = s"FormulaRange($hashCode)"
+
+    def formulasContainer: Formulas = formulas
   }
 
 object FormulaRange {

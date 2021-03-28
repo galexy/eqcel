@@ -33,5 +33,12 @@ case class ReifiedSheet(ranges: Seq[ReifiedRange])
   * @param start
   * @param end
   * @param definition
+  * @param location
   */
-case class ReifiedRange(id: Int, start: Int, end: Int, definition: Int => Expr)
+case class ReifiedRange(
+  id: Int, 
+  start: Int, 
+  end: Int, 
+  definition: Int => Expr,
+  location: Option[Location]
+)

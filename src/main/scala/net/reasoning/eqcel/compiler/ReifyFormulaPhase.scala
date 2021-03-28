@@ -1,6 +1,7 @@
 package net.reasoning.eqcel.compiler
 
 import net.reasoning.eqcel.formulas.Formulas
+import net.reasoning.eqcel.formulas.Placement
 import net.reasoning.eqcel.formulas.RangeMetadata
 import net.reasoning.eqcel.formulas.SheetExpression
 
@@ -11,6 +12,7 @@ import net.reasoning.eqcel.intermediate.ReifiedExpressions._
 import cats.data.State
 import cats.Foldable._
 import cats.instances.list._
+import net.reasoning.eqcel.formulas.Worksheet
 
 /** Compiler phase that takes a tree of user defined formulas and reifies them.
  * 
@@ -19,24 +21,25 @@ import cats.instances.list._
  * A range's formula and all of its overrides are collasped into a single
  * partial function.
  */
-object ReifyFormulaPhase extends Phase[Formulas, ReifiedSheet] {
+object ReifyFormulaPhase extends Phase[Worksheet, ReifiedSheet] {
   type Context = Map[Int, ReifiedRange]
   type SheetFormula = SheetExpression.IntLit => SheetExpression.Expr
 
-  def transform(tree: Formulas): ReifiedSheet = {
-    val ranges = tree.ranges map (transformRange)
+  def transform(tree: Worksheet): ReifiedSheet = {
+    val ranges = tree.placedRanges map transformRange
 
     ReifiedSheet(ranges)
   }
 
   // TODO: figure out how to make Expr an instance of cats Traversable
-  def transformRange(r: RangeMetadata) = {
+  def transformRange(placement: Placement) = {
+    val r = placement.formulas.range(placement.rangeId)
     val overrides = r.overrides.map(entry => transformSheetOverride(entry._1, entry._2))
     val baseFunc = transformSheetFormula(r.baseFormula)
     val reifiedFormula = if (overrides.isEmpty) baseFunc 
                         else (overrides reduce (_ orElse _)) orElse baseFunc
 
-    ReifiedRange(r.hashId, r.start, r.end, reifiedFormula)
+    ReifiedRange(r.hashId, r.start, r.end, reifiedFormula, placement.location)
   }
 
   def transformSheetFormula(formula: SheetFormula): PartialFunction[Int, Expr] = {

@@ -13,14 +13,17 @@ class CompilerSuite extends FunSuite
    
   test("empty expand phase") {
     object Model extends Formulas
+    object Sheet extends Worksheet
 
-    val expanded = new Compiler().compile(Model)
+    val expanded = new Compiler().compile(Sheet)
     assert(expanded == ExpandedSheet(Seq()))
   }
 
   test("expand sheet with empty range") {
-    object Model extends Formulas {
+    object Model extends Worksheet with Formulas {
       val range = Range[0, 2]
+
+      place row range at A(1)
     }
 
     val expanded = new Compiler().compile(Model)
@@ -35,7 +38,11 @@ class CompilerSuite extends FunSuite
       range(1) = 1
     }
 
-    val expanded = new Compiler().compile(Model)
+    object Sheet extends Worksheet {
+      place row Model.range at A(1)
+    }
+
+    val expanded = new Compiler().compile(Sheet)
     expanded should matchPattern {
       case ExpandedSheet(Seq(ExpandedRange(_,Seq(
         EmptyCell,
@@ -51,7 +58,11 @@ class CompilerSuite extends FunSuite
       val formula = FormulaRange[0, 2](index => index + 1)
     }
 
-    val expanded = new Compiler().compile(Model)
+    object Sheet extends Worksheet {
+      place row Model.formula at A(1)
+    }
+
+    val expanded = new Compiler().compile(Sheet)
     expanded should matchPattern {
       case ExpandedSheet(Seq(ExpandedRange(_, Seq(
         FormulaCell("=(0+1)"),
@@ -67,11 +78,15 @@ class CompilerSuite extends FunSuite
       val formula = FormulaRange[0, 2](index => range(index) + 1)
     }
 
-    val expanded = new Compiler().compile(Model)
+    object Sheet extends Worksheet {
+      place row Model.range at A(1)
+      place row Model.formula at B(1)
+    }
+
+    val expanded = new Compiler().compile(Sheet)
     val rangeHashId = s"range_Model.range.hashCode"
 
-    // NOTE: currently, the layout is non-deterministic
-    expanded should (matchPattern {
+    expanded should matchPattern {
       case ExpandedSheet(Seq(
         ExpandedRange(_, _),
         ExpandedRange(_, Seq(
@@ -80,15 +95,6 @@ class CompilerSuite extends FunSuite
           FormulaCell("=(C1+1)"),
         )
       ))) => 
-    } or matchPattern {
-      case ExpandedSheet(Seq(
-        ExpandedRange(_, Seq(
-          FormulaCell("=(A2+1)"),
-          FormulaCell("=(B2+1)"),
-          FormulaCell("=(C2+1)"),
-        )),
-        ExpandedRange(_, _),
-      )) => 
-    })
+    }
   }
 }
