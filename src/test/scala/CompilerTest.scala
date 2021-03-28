@@ -20,15 +20,13 @@ class CompilerSuite extends FunSuite
   }
 
   test("expand sheet with empty range") {
-    object Model extends Formulas {
+    object Model extends Worksheet with Formulas {
       val range = Range[0, 2]
+
+      place row range at A(1)
     }
 
-    object Sheet extends Worksheet {
-      place row Model.range at A(1)
-    }
-
-    val expanded = new Compiler().compile(Sheet)
+    val expanded = new Compiler().compile(Model)
     expanded should matchPattern {
       case ExpandedSheet(Seq(ExpandedRange("A1:C1", Seq(EmptyCell, EmptyCell, EmptyCell)))) =>
     }

@@ -23,6 +23,10 @@ class LayoutSuite extends FunSuite
     }
 
     val layout = compiler(Foo)
+    layout.rangesDefintions.length should equal(layout.rangeLocations.layouts.size)
+
+    val location = layout.rangeLocations.layouts(layout.rangesDefintions(0).id)
+    location.fullAddress should equal("A1:C1")
   }
 
   ignore("combine rows and then layout") {
