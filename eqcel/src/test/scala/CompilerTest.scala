@@ -80,7 +80,7 @@ class CompilerSuite extends FunSuite
 
     object Sheet extends Worksheet {
       place row Model.range at A(1)
-      place row Model.formula at B(1)
+      place row Model.formula at A(2)
     }
 
     val expanded = new Compiler().compile(Sheet)
