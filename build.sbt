@@ -7,5 +7,26 @@ bloopExportJarClassifiers in Global := Some(Set("sources"))
 
 import Dependencies._
 
-libraryDependencies ++= Dependencies.Core.dependencies
-libraryDependencies ++= Dependencies.Test.dependencies
+lazy val commonDependencies =
+    Dependencies.Core.dependencies ++
+    Dependencies.Test.dependencies
+
+lazy val global = project
+  .in(file("."))
+  .aggregate(
+     eqcel,
+     eqcel_google
+  )
+
+lazy val eqcel = project
+    .settings(
+        libraryDependencies ++= commonDependencies
+    )
+
+lazy val eqcel_google = project
+    .settings(
+      libraryDependencies ++=
+        commonDependencies ++
+        Dependencies.GoogleSheets.dependencies
+    )
+    .dependsOn(eqcel)
